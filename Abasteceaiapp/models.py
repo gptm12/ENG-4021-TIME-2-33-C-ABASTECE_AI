@@ -1,30 +1,18 @@
-from django.db import models
-
 # Create your models here.
 
-"""class Posto(models.Model):
-    nome = models.CharField(max_length=100)
-    endereco = models.CharField(max_length=200)
-    telefone = models.CharField(max_length=20)
-    precos =models.DateField()
-
-    def __str__(self):
-        return self.nome"""
-"""Modelagem de dados do AbasteceAi.
-
-Cada classe vira uma tabela no banco quando eu rodar as migracoes.
-"""
+from django.db import models
 
 class Posto(models.Model):
-    """Representa um posto de combustivel."""
-    nome = models.CharField(max_length=100)
-    bandeira = models.CharField(max_length=50, blank=True)
-    endereco = models.CharField(max_length=200)
-    avaliacao = models.DecimalField(max_digits=2, decimal_places=1, default=0)
-    criado_em = models.DateTimeField(auto_now_add=True)
+    nome = models.CharField(max_length=200)
+    endereco = models.CharField(max_length=300)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    preco_gasolina = models.DecimalField(max_digits=5, decimal_places=3, null=True, blank=True)
+    preco_etanol = models.DecimalField(max_digits=5, decimal_places=3, null=True, blank=True)
+    preco_diesel = models.DecimalField(max_digits=5, decimal_places=3, null=True, blank=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        # Texto que aparece no admin
         return self.nome
 
 
