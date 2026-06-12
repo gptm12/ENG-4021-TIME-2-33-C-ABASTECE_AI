@@ -15,6 +15,13 @@ class Posto(models.Model):
     def __str__(self):
         return self.nome
 
+class TipoCombustivel(models.Model):
+    """Combustivel disponivel no posto."""
+    titulo = models.CharField(max_length=100)
+    descricao = models.TextField()
+
+    def __str__(self):
+        return self.titulo
 
 class Preco(models.Model):
     """Preco de um combustivel em um posto."""
@@ -25,7 +32,8 @@ class Preco(models.Model):
         ('diesel', 'Diesel S-10'),
     ]
     posto = models.ForeignKey(Posto, on_delete=models.CASCADE, related_name='precos')
-    tipo = models.CharField(max_length=20, choices=TIPOS)
+    # tipo = models.CharField(max_length=20, choices=TIPOS)
+    tipo_combustivel = models.ForeignKey(TipoCombustivel, on_delete=models.CASCADE, related_name='precos')
     valor = models.DecimalField(max_digits=5, decimal_places=2)
     atualizado_em = models.DateTimeField(auto_now=True)
 
