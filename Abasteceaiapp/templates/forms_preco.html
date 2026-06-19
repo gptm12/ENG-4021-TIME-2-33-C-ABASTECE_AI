@@ -1,6 +1,7 @@
 <h1>Adicionar Preços</h1>
 
 <form>
+    {% csrf_token %}
     <div>
         <label>Tipo de combustível:</label>
         <select name="tipo_combustivel">

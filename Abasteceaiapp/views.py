@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
-from .models import Posto
+from .models import Posto,Preco
 
 
 def home(request):
@@ -59,4 +59,23 @@ def adicionar_posto_view(request):
     else:
         return render(request, 'forms_posto.html')
     
+def adicionar_preco_view(request):
+    if request.method == 'POST':
+        tipo_combustivel = request.POST.get('tipo_combustivel')
+        preco = request.POST.get('valor')
+
+        preco = Preco.objects.create(
+            tipo_combustivel
+        )
     
+
+def adicionar_comodidade_view(request):
+    if request.method == 'POST':
+       conveniencia = request.POST.get('conveniencia')
+       farmacia = request.POST.get('farmacia')
+       restaurante = request.POST.get('restaurante')
+       loja = request.POST.get('loja')
+
+
+        
+
