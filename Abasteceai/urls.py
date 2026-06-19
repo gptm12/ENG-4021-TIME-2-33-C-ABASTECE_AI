@@ -23,6 +23,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', RedirectView.as_view(url='/home/')),
     path('home/', views.home, name='home'),
-    path('login/', views.login_view),
+    path('login/', views.login_view, name='login'),
     path('api/postos.geojson', views.postos_geojson, name='postos-geojson'),
+    path('posto/<int:posto_id>/', views.detalhes_view, name='detalhes'
+    '-posto'),
+    path('perfil/', views.perfil_view, name='perfil'),
+    path('adicionar_posto/', views.adicionar_posto_view, name='adicionar-posto'),
 ]

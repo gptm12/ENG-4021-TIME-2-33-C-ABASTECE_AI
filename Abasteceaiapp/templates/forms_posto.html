@@ -1,6 +1,7 @@
 <h1>Adicionar Posto</h1>
 
-<form>
+<form method="post" action="/adicionar_posto/">
+    {% csrf_token %}
     <div>
         <label>Nome do posto:</label>
         <input name ="nome" type="text">

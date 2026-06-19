@@ -40,3 +40,23 @@ def detalhes_view(request, posto_id):
 
 def perfil_view(request):
     return render(request, 'perfil.html')
+
+def adicionar_posto_view(request):
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        endereco = request.POST.get('endereco')
+        latitude = request.POST.get('latitude')
+        longitude = request.POST.get('longitude')
+
+        posto = Posto.objects.create(
+            nome=nome,
+            endereco=endereco,
+            latitude=latitude,
+            longitude=longitude,
+
+        )
+        return render(request, 'detalhes.html', {'posto': posto})
+    else:
+        return render(request, 'forms_posto.html')
+    
+    
