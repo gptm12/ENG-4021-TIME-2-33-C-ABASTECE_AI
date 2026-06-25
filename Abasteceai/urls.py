@@ -29,4 +29,6 @@ urlpatterns = [
     '-posto'),
     path('perfil/', views.perfil_view, name='perfil'),
     path('adicionar_posto/', views.adicionar_posto_view, name='adicionar-posto'),
+    path('adicionar_preco/', views.adicionar_preco_view, name='adicionar-preco'),
+    path('adicionar_comodidade/', views.adicionar_comodidade_view, name='adicionar-comodidade'),
 ]
