@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Excluir Posto - AbasteceAi</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Excluir Posto</h1>
+        </header>
+        <div class="card">
+            <h3>{{ posto.nome }}</h3>
+            <p>{{ posto.endereco }}</p>
+        </div>
+        <p style="margin:15px 0;">Tem certeza que deseja excluir esse posto? Essa ação não pode ser desfeita.</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="botao">Sim, excluir</button>
+            <a href="{% url 'home' %}" class="botao botao-secundario">Cancelar</a>
+        </form>
+    </div>
+</body>
+</html>
