@@ -2,26 +2,30 @@
 
 <form>
     {% csrf_token %}
+
     <div>
-        <label>Conveniencia</label>
-        <input type="checkbox" name="conveniencia">
+        <label>Nome da comodidade:</label>
+        <input name="nome" type="text">
     </div>
 
     <div>
-        <label>Farmácia</label>
-        <input type="checkbox" name="farmacia">
+        <label>Tipo de comodidade:</label>
+        <select name="tipo">
+            <option value="restaurante">Restaurante</option>
+            <option value="loja">Loja</option>
+            <option value="farmacia">Farmácia</option>
+            <option value="conveniencia">Conveniência</option>
+        </select>
     </div>
-
+    
     <div>
-        <label>Restaurante</label>
-        <input type="checkbox" name="restaurante">
+        <label>Posto:</label>
+        <select name="posto">
+            {% for posto in postos %}
+                <option value="{{ posto.id }}">{{ posto.nome }}</option>
+            {% endfor %}
+        </select>
     </div>
-
-    <div>
-        <label>Loja</label>
-        <input type="checkbox" name="loja">
-    </div>
-
 
     <input type="submit" value= "Adicionar">
 
