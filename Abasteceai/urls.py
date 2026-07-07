@@ -25,4 +25,5 @@ urlpatterns = [
     path('home/', views.home, name='home'),
     path('login/', views.login_view),
     path('api/postos.geojson', views.postos_geojson, name='postos-geojson'),
+    
 ]

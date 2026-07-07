@@ -1,94 +1,32 @@
-{% load static %}
+{% load static leaflet_tags %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>AbasteceAí</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<style>
-  :root {
-    --bg: #ffffff; --text: #0f172a; --muted: #64748b; --border: #e5e7eb;
-    --card: #ffffff; --primary: #f59e0b; --primary-soft: #fef3c7;
-    --success: #16a34a; --shadow: 0 1px 2px rgba(0,0,0,.04), 0 1px 3px rgba(0,0,0,.06);
-    --radius: 14px;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.4; }
-  .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
-  .header { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; border-bottom: 1px solid var(--border); }
-  .brand { display: flex; align-items: center; gap: 12px; }
-  .brand-icon { width: 38px; height: 38px; border-radius: 10px; background: #fff; border: 1px solid var(--border); display: grid; place-items: center; }
-  .brand-name { font-size: 22px; font-weight: 800; letter-spacing: -0.01em; }
-  .header-actions { display: flex; align-items: center; gap: 18px; color: var(--muted); }
-  .icon-btn { width: 36px; height: 36px; display: grid; place-items: center; background: transparent; border: none; cursor: pointer; color: var(--text); border-radius: 8px; }
-  .icon-btn:hover { background: #f8fafc; }
-  .map { margin: 22px 0 18px; height: 320px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); position: relative; }
-  #map { width: 100%; height: 100%; }
-  #btn-localizar { position: absolute; top: 10px; right: 10px; z-index: 1000; background: white; border: 1px solid var(--border); border-radius: 10px; padding: 8px 14px; cursor: pointer; font-size: 13px; font-weight: 600; box-shadow: var(--shadow); }
-  #btn-localizar:hover { background: #f8fafc; }
-  #status-geo { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); z-index: 1000; background: white; border-radius: 20px; padding: 6px 16px; font-size: 13px; display: none; box-shadow: var(--shadow); white-space: nowrap; }
-  .search-row { display: flex; gap: 10px; align-items: stretch; margin-bottom: 14px; }
-  .search { flex: 1; display: flex; align-items: center; gap: 10px; height: 56px; padding: 0 18px; background: #fff; border: 1px solid var(--border); border-radius: 999px; box-shadow: var(--shadow); color: var(--muted); font-size: 16px; }
-  .search input { flex: 1; border: none; outline: none; background: transparent; font-size: 16px; color: var(--text); }
-  .filter-btn { position: relative; width: 56px; height: 56px; border-radius: 16px; border: 1px solid var(--border); background: #fff; display: grid; place-items: center; cursor: pointer; box-shadow: var(--shadow); }
-  .filter-btn .badge { position: absolute; top: -6px; right: -6px; background: var(--text); color: #fff; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 999px; }
-  .actions { display: flex; gap: 10px; margin: 14px 0 18px; }
-  .btn { height: 48px; padding: 0 18px; border-radius: 12px; border: 1px solid var(--border); background: #fff; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; cursor: pointer; color: var(--text); box-shadow: var(--shadow); }
-  .btn:hover { background: #f8fafc; }
-  .btn.grow { flex: 1; justify-content: center; }
-  .btn.square { width: 48px; padding: 0; justify-content: center; }
-  .tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
-  .tab { padding: 10px 18px; border-radius: 999px; border: 1px solid var(--border); background: #fff; font-size: 14px; color: var(--text); cursor: pointer; }
-  .tab.active { background: var(--text); color: #fff; border-color: var(--text); }
-  .top-card { border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); padding: 20px 22px; margin-bottom: 22px; box-shadow: var(--shadow); }
-  .top-card h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 14px; font-size: 17px; }
-  .trophy { color: var(--primary); }
-  .top-list { display: flex; flex-direction: column; gap: 14px; }
-  .top-row { display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 14px; }
-  .rank { color: var(--muted); font-weight: 600; }
-  .station-name { font-weight: 700; }
-  .station-sub { color: var(--muted); font-size: 13px; }
-  .price { color: var(--success); font-weight: 700; }
-  .meta { color: var(--muted); font-size: 14px; margin: 6px 4px 14px; }
-  .stations { display: flex; flex-direction: column; gap: 12px; padding-bottom: 40px; }
-  .station { display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center; padding: 18px 20px; border: 1px solid var(--border); border-radius: var(--radius); background: #fff; box-shadow: var(--shadow); }
-  .station h3 { margin: 0 0 6px; font-size: 16px; }
-  .station .addr { color: var(--muted); font-size: 14px; margin-bottom: 8px; }
-  .station .info { display: flex; gap: 14px; align-items: center; font-size: 13px; color: var(--muted); }
-  .info .rating, .info .dist { color: var(--primary); font-weight: 600; }
-  .station-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; min-width: 90px; }
-  .station-icons { display: flex; gap: 10px; color: var(--primary); }
-  .station-icons .heart { color: var(--muted); }
-  .no-price { color: var(--muted); font-size: 13px; }
-  @media (max-width: 640px) {
-    .map { height: 220px; }
-    .station { grid-template-columns: 1fr; }
-    .station-actions { flex-direction: row; justify-content: space-between; min-width: 0; }
-  }
-</style>
+{% leaflet_js %}
+{% leaflet_css %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
 <div class="container">
   <header class="header">
     <div class="brand">
-      <div class="brand-icon">⛽</div>
+      <div class="brand-icon"></div>
       <span class="brand-name">AbasteceAí</span>
     </div>
     <div class="header-actions">
-      <button class="icon-btn" title="Notificações">🔔</button>
-      <button class="icon-btn" title="Perfil">👤</button>
+      <button class="icon-btn" title="Notificações"></button>
+      <button class="icon-btn" title="Perfil"></button>
       <button class="icon-btn" title="Sair">→</button>
-        <!-- <a href="{% url 'logout' %}" class="icon-btn" title="Sair">→</a> -->
-
     </div>
   </header>
 
   <!-- MAPA -->
   <div class="map">
-    <div id="map"></div>
-    <button id="btn-localizar" onclick="localizarUsuario()">📍 Minha localização</button>
+{% leaflet_map "map" callback="window.mapInit" %}
+    <button id="btn-localizar" onclick="localizarUsuario()"> Minha localização</button>
     <div id="status-geo"></div>
   </div>
 
@@ -107,10 +45,9 @@
   <!-- AÇÕES -->
   <div class="actions">
     <button class="btn grow">+ Informar Preço</button>
-    <!-- <a href="{% url 'cadastro' %}" class="btn grow">+ Informar Preço</a> -->
     <button class="btn grow">✓ Validar Preços</button>
-    <button class="btn square">📊</button>
-    <button class="btn square">🏆</button>
+    <button class="btn square"></button>
+    <button class="btn square"></button>
   </div>
 
   <!-- ABAS DE COMBUSTÍVEL -->
@@ -125,7 +62,7 @@
 
   <!-- TOP 3 MAIS BARATOS -->
   <div class="top-card">
-    <h2><span class="trophy">🏆</span> Postos Mais Baratos — <span id="aba-titulo">Gasolina</span></h2>
+    <h2><span class="trophy"></span> Postos Mais Baratos — <span id="aba-titulo">Gasolina</span></h2>
     <div class="top-list" id="top-list">
       <p style="color:var(--muted);font-size:14px">Carregando...</p>
     </div>
@@ -137,32 +74,37 @@
   <section class="stations" id="lista-postos"></section>
 </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-  const map = L.map('map', { zoomControl: true }).setView([-22.9711, -43.2226], 12);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap', maxZoom: 19
-  }).addTo(map);
-
+  // o mapa, o tile layer e o centro/zoom padrão vêm do LEAFLET_CONFIG no settings.py
+  // a tag leaflet_map do template já cria o mapa e chama a mapInit quando ele fica pronto
+  let map;
   let marcadorUsuario = null;
   let userLatLng = null;
-  let todosPostos = [];
+  let todosPostos = []; // guarda todos os postos vindos do backend, sem filtro
 
+  // ícone redondo azul pra marcar onde o usuário está no mapa
   const iconeUsuario = L.divIcon({
     html: '<div style="width:14px;height:14px;background:#378ADD;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2px #378ADD"></div>',
     iconSize: [20, 20], iconAnchor: [10, 10], className: ''
   });
 
-  // Carrega postos do Django
-  fetch("{% url 'postos-geojson' %}")
-    .then(r => r.json())
-    .then(data => {
-      todosPostos = data.features;
-      renderizarTudo(todosPostos);
-    });
+  // chamada automaticamente pelo leaflet quando o mapa termina de carregar.
+  // a partir daqui a gente busca os postos no django e desenha tudo na tela
+  function mapInit(leafletMap, options) {
+    map = leafletMap;
 
+    fetch("{% url 'postos-geojson' %}")
+      .then(r => r.json())
+      .then(data => {
+        todosPostos = data.features;
+        renderizarTudo(todosPostos);
+      });
+  }
+
+  // recebe a lista de postos e atualiza tudo de uma vez: marcadores no mapa,
+  // a lista embaixo e o top 3 mais barato
   function renderizarTudo(postos) {
-    // Limpa marcadores antigos (exceto usuário)
+    // tira os marcadores antigos do mapa, mas deixa o marcador do usuário
     map.eachLayer(l => { if (l instanceof L.Marker && l !== marcadorUsuario) map.removeLayer(l); });
 
     postos.forEach(f => {
@@ -176,7 +118,7 @@
       L.marker([lat, lng]).addTo(map).bindPopup(`
         <strong>${p.nome}</strong><br>${p.endereco}${distHTML}
         <hr style="margin:4px 0">
-        ⛽ R$ ${p.gasolina || '–'} &nbsp; 🌿 R$ ${p.etanol || '–'}
+        R$ ${p.gasolina || '–'} &nbsp; R$ ${p.etanol || '–'}
       `);
     });
 
@@ -185,9 +127,11 @@
     document.getElementById('meta-texto').textContent = `${postos.length} postos encontrados`;
   }
 
+  // monta os cards da lista de postos que fica embaixo do mapa
   function renderizarLista(postos) {
     const el = document.getElementById('lista-postos');
     if (!postos.length) { el.innerHTML = '<p style="color:var(--muted)">Nenhum posto encontrado.</p>'; return; }
+
     el.innerHTML = postos.map(f => {
       const p = f.properties;
       const [lng, lat] = f.geometry.coordinates;
@@ -203,8 +147,8 @@
             <div class="addr">${p.endereco}</div>
             <div class="info">
               ${distStr}
-              ${p.gasolina ? `<span>⛽ R$ ${p.gasolina}</span>` : ''}
-              ${p.etanol ? `<span>🌿 R$ ${p.etanol}</span>` : ''}
+              ${p.gasolina ? `<span> R$ ${p.gasolina}</span>` : ''}
+              ${p.etanol ? `<span>R$ ${p.etanol}</span>` : ''}
             </div>
           </div>
           <div class="station-actions">
@@ -214,10 +158,13 @@
     }).join('');
   }
 
+  // pega só os postos que têm preço de gasolina cadastrado e mostra
+  // os 3 mais baratos no card do topo
   function renderizarTop(postos) {
     const comPreco = postos.filter(f => f.properties.preco_gasolina || f.properties.gasolina);
     const el = document.getElementById('top-list');
     if (!comPreco.length) { el.innerHTML = '<p style="color:var(--muted);font-size:14px">Sem preços cadastrados ainda.</p>'; return; }
+
     el.innerHTML = comPreco.slice(0, 3).map((f, i) => {
       const p = f.properties;
       return `<div class="top-row">
@@ -228,6 +175,8 @@
     }).join('');
   }
 
+  // filtra os postos pelo que foi digitado na busca, comparando com o nome
+  // e o endereço (ignorando maiúscula/minúscula)
   function filtrarPostos() {
     const q = document.getElementById('busca').value.toLowerCase();
     const filtrados = todosPostos.filter(f =>
@@ -237,16 +186,20 @@
     renderizarTudo(filtrados);
   }
 
+  // troca a aba de combustível ativa (gasolina, etanol, etc) e atualiza
+  // o título que aparece no card do top 3
   function selecionarAba(el) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     el.classList.add('active');
     document.getElementById('aba-titulo').textContent = el.textContent;
   }
 
-  // Geolocalização
+  // pede pro navegador a localização atual do usuário (gps/wifi), marca
+  // ela no mapa e recalcula a distância de cada posto a partir daí
   function localizarUsuario() {
     if (!navigator.geolocation) { alert('Navegador não suporta geolocalização.'); return; }
     setStatus('Obtendo sua localização...');
+
     navigator.geolocation.getCurrentPosition(
       pos => {
         userLatLng = L.latLng(pos.coords.latitude, pos.coords.longitude);
@@ -255,9 +208,10 @@
           .addTo(map).bindPopup('Você está aqui').openPopup();
         map.setView(userLatLng, 14);
         setStatus('Localização encontrada!', 2000);
-        renderizarTudo(todosPostos); // recalcula distâncias
+        renderizarTudo(todosPostos); // recalcula as distâncias com a nova posição
       },
       err => {
+        // 1 = permissão negada, 2 = posição indisponível, 3 = deu timeout
         const msgs = { 1: 'Permissão negada.', 2: 'Posição indisponível.', 3: 'Tempo esgotado.' };
         setStatus(msgs[err.code] || 'Erro.', 4000);
       },
@@ -265,6 +219,8 @@
     );
   }
 
+  // mostra uma mensagem no balãozinho embaixo do mapa. se passar um tempo
+  // em ms, ela desaparece sozinha
   function setStatus(msg, ms = null) {
     const el = document.getElementById('status-geo');
     el.textContent = msg; el.style.display = 'block';
