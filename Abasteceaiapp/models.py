@@ -52,6 +52,16 @@ class Comodidade(models.Model):
     posto = models.ForeignKey(Posto, on_delete=models.CASCADE, related_name='comodidades')
     tipo = models.CharField(max_length=20, choices=TIPOS)
     nome = models.CharField(max_length=100)
-
     def __str__(self):
         return f"{self.nome} ({self.tipo})"
+    
+
+class Conta(models.Model):
+    """Conta de usuario do aplicativo."""
+    usuario = models.CharField(max_length=100)
+    email = models.EmailField()
+    senha = models.CharField(max_length=100)
+    def __str__(self):
+        return self.usuario, self.email, self.senha
+
+

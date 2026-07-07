@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
-from .models import Comodidade, Posto,Preco
+from .models import Comodidade, Conta, Posto,Preco
 
 
 def home(request):
@@ -129,5 +129,18 @@ def atualizar_comodidade_view(request):
         postos = Posto.objects.all()
         return render(request, 'forms_comodidade.html', context={'action': 'Atualizar', 'postos': postos})
     
-        
+def criar_conta_view(request):
+    if request.method == 'POST':
+        usuario = request.POST.get('usuario')
+        email = request.POST.get('email')
+        senha = request.POST.get('senha')
+
+        conta = Conta.objects.create(
+            usuario=usuario,
+            email=email,
+            senha=senha,
+        )
+        return render(request, 'perfil.html', {'conta': conta})
+    else:
+        return render(request, 'forms_conta.html', context={'action': 'Adicionar'})
 

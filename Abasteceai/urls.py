@@ -27,6 +27,7 @@ urlpatterns = [
     path('api/postos.geojson', views.postos_geojson, name='postos-geojson'),
     path('posto/<int:posto_id>/', views.detalhes_view, name='detalhes'),
     path('perfil/', views.perfil_view, name='perfil'),
+    path('criar_conta/', views.criar_conta_view, name='criar-conta'),
     path('adicionar_posto/', views.adicionar_posto_view, name='adicionar-posto'),
     path('atualizar_posto/<int:posto_id>/', views.atualizar_posto_view, name='atualizar-posto'),
     path('adicionar_preco/', views.adicionar_preco_view, name='adicionar-preco'),
