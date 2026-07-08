@@ -108,3 +108,87 @@ header h1 {
     color: #ff6b00;
     text-decoration: none;
 }
+
+/*teste do css de home*/
+
+/* estilos da tela principal do abasteceaí (mapa + lista de postos) */
+
+:root {
+  --bg: #ffffff; --text: #0f172a; --muted: #64748b; --border: #e5e7eb;
+  --card: #ffffff; --primary: #f59e0b; --primary-soft: #fef3c7;
+  --success: #16a34a; --shadow: 0 1px 2px rgba(0,0,0,.04), 0 1px 3px rgba(0,0,0,.06);
+  --radius: 14px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.4; }
+
+.container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+/* cabeçalho com a logo e os botões de notificação/perfil/sair */
+.header { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; border-bottom: 1px solid var(--border); }
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-icon { width: 38px; height: 38px; border-radius: 10px; background: #fff; border: 1px solid var(--border); display: grid; place-items: center; }
+.brand-name { font-size: 22px; font-weight: 800; letter-spacing: -0.01em; }
+.header-actions { display: flex; align-items: center; gap: 18px; color: var(--muted); }
+.icon-btn { width: 36px; height: 36px; display: grid; place-items: center; background: transparent; border: none; cursor: pointer; color: var(--text); border-radius: 8px; }
+.icon-btn:hover { background: #f8fafc; }
+
+/* o mapa do leaflet e os botões que ficam por cima dele */
+.map { margin: 22px 0 18px; height: 320px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); position: relative; }
+#map { width: 100%; height: 100%; }
+#btn-localizar { position: absolute; top: 10px; right: 10px; z-index: 1000; background: white; border: 1px solid var(--border); border-radius: 10px; padding: 8px 14px; cursor: pointer; font-size: 13px; font-weight: 600; box-shadow: var(--shadow); }
+#btn-localizar:hover { background: #f8fafc; }
+#status-geo { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); z-index: 1000; background: white; border-radius: 20px; padding: 6px 16px; font-size: 13px; display: none; box-shadow: var(--shadow); white-space: nowrap; }
+
+/* barra de busca + botão de filtro com o badge */
+.search-row { display: flex; gap: 10px; align-items: stretch; margin-bottom: 14px; }
+.search { flex: 1; display: flex; align-items: center; gap: 10px; height: 56px; padding: 0 18px; background: #fff; border: 1px solid var(--border); border-radius: 999px; box-shadow: var(--shadow); color: var(--muted); font-size: 16px; }
+.search input { flex: 1; border: none; outline: none; background: transparent; font-size: 16px; color: var(--text); }
+.filter-btn { position: relative; width: 56px; height: 56px; border-radius: 16px; border: 1px solid var(--border); background: #fff; display: grid; place-items: center; cursor: pointer; box-shadow: var(--shadow); }
+.filter-btn .badge { position: absolute; top: -6px; right: -6px; background: var(--text); color: #fff; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 999px; }
+
+/* botões de ação (informar preço, validar preços, etc) */
+.actions { display: flex; gap: 10px; margin: 14px 0 18px; }
+.btn { height: 48px; padding: 0 18px; border-radius: 12px; border: 1px solid var(--border); background: #fff; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; cursor: pointer; color: var(--text); box-shadow: var(--shadow); }
+.btn:hover { background: #f8fafc; }
+.btn.grow { flex: 1; justify-content: center; }
+.btn.square { width: 48px; padding: 0; justify-content: center; }
+
+/* abas de combustível (gasolina, etanol, diesel...) */
+.tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+.tab { padding: 10px 18px; border-radius: 999px; border: 1px solid var(--border); background: #fff; font-size: 14px; color: var(--text); cursor: pointer; }
+.tab.active { background: var(--text); color: #fff; border-color: var(--text); }
+
+/* card do top 3 postos mais baratos */
+.top-card { border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); padding: 20px 22px; margin-bottom: 22px; box-shadow: var(--shadow); }
+.top-card h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 14px; font-size: 17px; }
+.trophy { color: var(--primary); }
+.top-list { display: flex; flex-direction: column; gap: 14px; }
+.top-row { display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 14px; }
+.rank { color: var(--muted); font-weight: 600; }
+.station-name { font-weight: 700; }
+.station-sub { color: var(--muted); font-size: 13px; }
+.price { color: var(--success); font-weight: 700; }
+
+.meta { color: var(--muted); font-size: 14px; margin: 6px 4px 14px; }
+
+/* lista geral de postos */
+.stations { display: flex; flex-direction: column; gap: 12px; padding-bottom: 40px; }
+.station { display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center; padding: 18px 20px; border: 1px solid var(--border); border-radius: var(--radius); background: #fff; box-shadow: var(--shadow); }
+.station h3 { margin: 0 0 6px; font-size: 16px; }
+.station .addr { color: var(--muted); font-size: 14px; margin-bottom: 8px; }
+.station .info { display: flex; gap: 14px; align-items: center; font-size: 13px; color: var(--muted); }
+.info .rating, .info .dist { color: var(--primary); font-weight: 600; }
+.station-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; min-width: 90px; }
+.station-icons { display: flex; gap: 10px; color: var(--primary); }
+.station-icons .heart { color: var(--muted); }
+.no-price { color: var(--muted); font-size: 13px; }
+
+/* ajustes pra tela pequena */
+@media (max-width: 640px) {
+  .map { height: 220px; }
+  .station { grid-template-columns: 1fr; }
+  .station-actions { flex-direction: row; justify-content: space-between; min-width: 0; }
+}
