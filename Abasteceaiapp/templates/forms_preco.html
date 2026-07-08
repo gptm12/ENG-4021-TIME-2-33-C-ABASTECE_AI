@@ -1,0 +1,31 @@
+<h1>{{action}} Preços</h1>
+
+<form>
+    {% csrf_token %}
+    <div>
+        <label>Tipo de combustível:</label>
+        <select name="tipo_combustivel">
+            <option value="gasolina">Gasolina</option>
+            <option value="alcool">Álcool</option> 
+            <option value="etanol">Etanol</option>
+            <option value="diesel">Diesel</option>
+        </select>
+    </div>
+    <div>
+        <label>Preço do combustível:</label>
+        <input name="valor" type="number" step="0.01">
+    </div>
+
+    <div>
+        <label>Posto:</label>
+        <select name="posto">
+            {% for posto in postos %}
+                <option value="{{ posto.id }}">{{ posto.nome }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <input type="submit" value= "Adicionar">
+</form>
+
+<!--depois ver como relacionar com postos do banco de dados.  -->

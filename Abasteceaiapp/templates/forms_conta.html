@@ -1,0 +1,23 @@
+<h1>Crie sua conta</h1>
+
+<form>
+    {% csrf_token %}
+
+    <div>
+        <label>Nome do usuário:</label>
+        <input name="usuario" type="text">
+    </div>
+
+    <div>
+        <label>Email:</label>
+        <input name="email" type="email">
+    </div>
+
+    <div>
+        <label>Senha:</label>
+        <input name="senha" type="password">
+    </div>
+
+    <input type="submit" value= "Criar conta">
+
+</form>

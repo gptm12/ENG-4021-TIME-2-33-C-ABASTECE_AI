@@ -1,0 +1,32 @@
+<h1>{{action}} Comodidades</h1>
+
+<form>
+    {% csrf_token %}
+
+    <div>
+        <label>Nome da comodidade:</label>
+        <input name="nome" type="text">
+    </div>
+
+    <div>
+        <label>Tipo de comodidade:</label>
+        <select name="tipo">
+            <option value="restaurante">Restaurante</option>
+            <option value="loja">Loja</option>
+            <option value="farmacia">Farmácia</option>
+            <option value="conveniencia">Conveniência</option>
+        </select>
+    </div>
+    
+    <div>
+        <label>Posto:</label>
+        <select name="posto">
+            {% for posto in postos %}
+                <option value="{{ posto.id }}">{{ posto.nome }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <input type="submit" value= "Adicionar">
+
+</form>

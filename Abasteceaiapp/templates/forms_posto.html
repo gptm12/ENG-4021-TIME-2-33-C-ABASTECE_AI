@@ -1,0 +1,27 @@
+<h1>{{action}} Posto</h1>
+
+<form method="post" action="/adicionar_posto/">
+    {% csrf_token %}
+    <div>
+        <label>Nome do posto:</label>
+        <input name ="nome" type="text">
+    </div>
+
+    <div>
+        <label>Endereço:</label>
+        <input name="endereco" type="text">
+    </div>
+
+    <div>
+        <label>Latitude:</label>
+        <input name="latitude" type="text">
+    </div>
+
+    <div>
+        <label>Longitude:</label>
+        <input name="longitude" type="text">
+    </div>
+
+    <input type="submit" value= "Adicionar">
+
+</form>
