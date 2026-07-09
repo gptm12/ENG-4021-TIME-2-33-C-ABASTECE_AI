@@ -1,119 +1,4 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
-body {
-    background-color: #f4f4f4;
-    color: #333;
-}
-.container {
-    max-width: 500px;
-    margin: 0 auto;
-    background-color: #fff;
-    min-height: 100vh;
-    padding: 20px;
-}
-/* Cabeçalho */
-header {
-    background-color: #ff6b00;
-    color: #fff;
-    padding: 15px;
-    text-align: center;
-    margin-bottom: 20px;
-}
-header h1 {
-    font-size: 22px;
-}
-/* Botões */
-.botao {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    background-color: #ff6b00;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    cursor: pointer;
-    margin-top: 10px;
-    text-align: center;
-    text-decoration: none;
-}
-.botao:hover {
-    background-color: #e55d00;
-}
-.botao-secundario {
-    background-color: #fff;
-    color: #ff6b00;
-    border: 1px solid #ff6b00;
-}
-/* Formulários */
-.form-grupo {
-    margin-bottom: 15px;
-}
-.form-grupo label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-.form-grupo input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-}
-/* Cards de postos */
-.card {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 15px;
-    margin-bottom: 12px;
-}
-.card h3 {
-    color: #ff6b00;
-    margin-bottom: 5px;
-}
-.card p {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 4px;
-}
-.preco {
-    font-size: 18px;
-    font-weight: bold;
-    color: #009933;
-    margin-top: 8px;
-}
-/* Lista de preços */
-.lista-precos {
-    list-style: none;
-}
-.lista-precos li {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-}
-/* Link de rodapé */
-.link-rodape {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 14px;
-}
-.link-rodape a {
-    color: #ff6b00;
-    text-decoration: none;
-}
-
-/*teste do css de home*/
-
-/* estilos da tela principal do abasteceaí (mapa + lista de postos) */
-
-/* Design tokens */
+/* Design tokens - APENAS UMA DEFINIÇÃO */
 :root {
   --bg: #ffffff;
   --fg: #0f0f10;
@@ -121,7 +6,7 @@ header h1 {
   --border: #e5e7eb;
   --border-strong: #d1d5db;
   --card: #ffffff;
-  --primary: #fbcf1a;      /* amarelo do app */
+  --primary: #fbcf1a;
   --primary-hover: #f5c40a;
   --primary-fg: #111111;
   --radius: 12px;
@@ -159,7 +44,7 @@ button { font-family: inherit; cursor: pointer; }
   align-items: center;
   gap: 10px;
   margin: 0 auto;
-  transform: translateX(-40px); /* leva a marca para o centro do layout */
+  transform: translateX(-40px);
 }
 .brand-logo {
   width: 36px;
@@ -214,8 +99,7 @@ button { font-family: inherit; cursor: pointer; }
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   overflow: hidden;
-  background:
-    linear-gradient(180deg, #eaf3ff 0%, #dfeaf5 100%);
+  background: linear-gradient(180deg, #eaf3ff 0%, #dfeaf5 100%);
   background-image:
     radial-gradient(circle at 30% 40%, #f4efe6 0 22%, transparent 23%),
     radial-gradient(circle at 55% 55%, #f4efe6 0 26%, transparent 27%),
@@ -362,4 +246,186 @@ button { font-family: inherit; cursor: pointer; }
   .container { padding: 0 14px; margin-top: 14px; }
   .btn { padding: 10px 14px; font-size: 13px; }
   .map { height: 180px; }
+}
+
+/* ============================================ */
+/* CSS da página de login (usando classes específicas) */
+/* ============================================ */
+
+.auth-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #0a0a0a;  /* Fundo PRETO */
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  background: #ffffff;  /* Card BRANCO */
+  border-radius: 16px;
+  padding: 48px 32px 40px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  border: none;
+}
+
+/* Centralizando o logo */
+.auth-card .brand {
+  text-align: center;
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-card .brand-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  background: var(--primary, #fbcf1a);
+  color: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  box-shadow: 0 4px 12px rgba(251, 207, 26, 0.3);
+}
+
+.auth-card .brand-name {
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+  color: var(--fg, #0f0f10);
+}
+
+.auth-card .brand-tagline {
+  margin: 0;
+  color: var(--muted, #6b7280);
+  font-size: 14px;
+}
+
+/* Formulário */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fg, #0f0f10);
+}
+
+.field input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 10px;
+  background: #f9fafb;
+  font-size: 15px;
+  color: var(--fg, #0f0f10);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.field input:focus {
+  border-color: var(--primary, #fbcf1a);
+  box-shadow: 0 0 0 3px rgba(251, 207, 26, 0.2);
+}
+
+.password-wrap {
+  position: relative;
+}
+
+.password-wrap input {
+  padding-right: 44px;
+}
+
+.toggle-pass {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: 0;
+  padding: 8px;
+  color: var(--muted, #6b7280);
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.toggle-pass:hover {
+  color: var(--fg, #0f0f10);
+}
+
+.btn-primary {
+  margin-top: 8px;
+  width: 100%;
+  background: var(--primary, #fbcf1a);
+  color: #111;
+  border: 0;
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover, #f5c40a);
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+}
+
+.signup-line {
+  text-align: center;
+  font-size: 14px;
+  color: var(--muted, #6b7280);
+  margin: 20px 0 0;
+}
+
+.signup-line a {
+  color: var(--fg, #0f0f10);
+  font-weight: 600;
+  text-decoration: underline;
+  transition: color 0.15s ease;
+}
+
+.signup-line a:hover {
+  color: var(--primary-fg, #111111);
+}
+
+/* Responsivo Login */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 32px 20px 28px;
+  }
+  
+  .auth-card .brand-name {
+    font-size: 24px;
+  }
+  
+  .auth-card .brand-logo {
+    width: 64px;
+    height: 64px;
+  }
+  
+  .auth-card .brand-logo svg {
+    width: 32px !important;
+    height: 32px !important;
+  }
 }
