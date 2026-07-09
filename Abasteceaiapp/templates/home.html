@@ -1,272 +1,362 @@
-{% load static %}
+<!-- Abasteceaiapp/templates/Abasteceaiapp/homefeio.html -->
+{% load static leaflet_tags %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>AbasteceAí</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<style>
-  :root {
-    --bg: #ffffff; --text: #0f172a; --muted: #64748b; --border: #e5e7eb;
-    --card: #ffffff; --primary: #f59e0b; --primary-soft: #fef3c7;
-    --success: #16a34a; --shadow: 0 1px 2px rgba(0,0,0,.04), 0 1px 3px rgba(0,0,0,.06);
-    --radius: 14px;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.4; }
-  .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
-  .header { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; border-bottom: 1px solid var(--border); }
-  .brand { display: flex; align-items: center; gap: 12px; }
-  .brand-icon { width: 38px; height: 38px; border-radius: 10px; background: #fff; border: 1px solid var(--border); display: grid; place-items: center; }
-  .brand-name { font-size: 22px; font-weight: 800; letter-spacing: -0.01em; }
-  .header-actions { display: flex; align-items: center; gap: 18px; color: var(--muted); }
-  .icon-btn { width: 36px; height: 36px; display: grid; place-items: center; background: transparent; border: none; cursor: pointer; color: var(--text); border-radius: 8px; }
-  .icon-btn:hover { background: #f8fafc; }
-  .map { margin: 22px 0 18px; height: 320px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); position: relative; }
-  #map { width: 100%; height: 100%; }
-  #btn-localizar { position: absolute; top: 10px; right: 10px; z-index: 1000; background: white; border: 1px solid var(--border); border-radius: 10px; padding: 8px 14px; cursor: pointer; font-size: 13px; font-weight: 600; box-shadow: var(--shadow); }
-  #btn-localizar:hover { background: #f8fafc; }
-  #status-geo { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); z-index: 1000; background: white; border-radius: 20px; padding: 6px 16px; font-size: 13px; display: none; box-shadow: var(--shadow); white-space: nowrap; }
-  .search-row { display: flex; gap: 10px; align-items: stretch; margin-bottom: 14px; }
-  .search { flex: 1; display: flex; align-items: center; gap: 10px; height: 56px; padding: 0 18px; background: #fff; border: 1px solid var(--border); border-radius: 999px; box-shadow: var(--shadow); color: var(--muted); font-size: 16px; }
-  .search input { flex: 1; border: none; outline: none; background: transparent; font-size: 16px; color: var(--text); }
-  .filter-btn { position: relative; width: 56px; height: 56px; border-radius: 16px; border: 1px solid var(--border); background: #fff; display: grid; place-items: center; cursor: pointer; box-shadow: var(--shadow); }
-  .filter-btn .badge { position: absolute; top: -6px; right: -6px; background: var(--text); color: #fff; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 999px; }
-  .actions { display: flex; gap: 10px; margin: 14px 0 18px; }
-  .btn { height: 48px; padding: 0 18px; border-radius: 12px; border: 1px solid var(--border); background: #fff; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; cursor: pointer; color: var(--text); box-shadow: var(--shadow); }
-  .btn:hover { background: #f8fafc; }
-  .btn.grow { flex: 1; justify-content: center; }
-  .btn.square { width: 48px; padding: 0; justify-content: center; }
-  .tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
-  .tab { padding: 10px 18px; border-radius: 999px; border: 1px solid var(--border); background: #fff; font-size: 14px; color: var(--text); cursor: pointer; }
-  .tab.active { background: var(--text); color: #fff; border-color: var(--text); }
-  .top-card { border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); padding: 20px 22px; margin-bottom: 22px; box-shadow: var(--shadow); }
-  .top-card h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 14px; font-size: 17px; }
-  .trophy { color: var(--primary); }
-  .top-list { display: flex; flex-direction: column; gap: 14px; }
-  .top-row { display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 14px; }
-  .rank { color: var(--muted); font-weight: 600; }
-  .station-name { font-weight: 700; }
-  .station-sub { color: var(--muted); font-size: 13px; }
-  .price { color: var(--success); font-weight: 700; }
-  .meta { color: var(--muted); font-size: 14px; margin: 6px 4px 14px; }
-  .stations { display: flex; flex-direction: column; gap: 12px; padding-bottom: 40px; }
-  .station { display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center; padding: 18px 20px; border: 1px solid var(--border); border-radius: var(--radius); background: #fff; box-shadow: var(--shadow); }
-  .station h3 { margin: 0 0 6px; font-size: 16px; }
-  .station .addr { color: var(--muted); font-size: 14px; margin-bottom: 8px; }
-  .station .info { display: flex; gap: 14px; align-items: center; font-size: 13px; color: var(--muted); }
-  .info .rating, .info .dist { color: var(--primary); font-weight: 600; }
-  .station-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; min-width: 90px; }
-  .station-icons { display: flex; gap: 10px; color: var(--primary); }
-  .station-icons .heart { color: var(--muted); }
-  .no-price { color: var(--muted); font-size: 13px; }
-  @media (max-width: 640px) {
-    .map { height: 220px; }
-    .station { grid-template-columns: 1fr; }
-    .station-actions { flex-direction: row; justify-content: space-between; min-width: 0; }
-  }
-</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AbasteceAí</title>
+    
+    <!-- Django Leaflet -->
+    {% leaflet_js %}
+    {% leaflet_css %}
+    
+    <!-- Seu CSS estilizado -->
+     <link rel="stylesheet" href="/static/style.css">
+    <!-- Fonte Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
-<div class="container">
-  <header class="header">
-    <div class="brand">
-      <div class="brand-icon">⛽</div>
-      <span class="brand-name">AbasteceAí</span>
-    </div>
-    <div class="header-actions">
-      <button class="icon-btn" title="Notificações">🔔</button>
-      <button class="icon-btn" title="Perfil">👤</button>
-      <button class="icon-btn" title="Sair">→</button>
-    </div>
-  </header>
-
-  <!-- MAPA -->
-  <div class="map">
-    <div id="map"></div>
-    <button id="btn-localizar" onclick="localizarUsuario()">📍 Minha localização</button>
-    <div id="status-geo"></div>
-  </div>
-
-  <!-- BUSCA -->
-  <div class="search-row">
-    <div class="search">
-      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" placeholder="Buscar posto, endereço ou cidade..." id="busca" oninput="filtrarPostos()" />
-    </div>
-    <button class="filter-btn">
-      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
-      <span class="badge">25</span>
-    </button>
-  </div>
-
-  <!-- AÇÕES -->
-  <div class="actions">
-    <button class="btn grow">+ Informar Preço</button>
-    <button class="btn grow">✓ Validar Preços</button>
-    <button class="btn square">📊</button>
-    <button class="btn square">🏆</button>
-  </div>
-
-  <!-- ABAS DE COMBUSTÍVEL -->
-  <div class="tabs">
-    <button class="tab active" onclick="selecionarAba(this)">Gasolina</button>
-    <button class="tab" onclick="selecionarAba(this)">Etanol</button>
-    <button class="tab" onclick="selecionarAba(this)">Aditivada</button>
-    <button class="tab" onclick="selecionarAba(this)">Diesel S10</button>
-    <button class="tab" onclick="selecionarAba(this)">Diesel S500</button>
-    <button class="tab" onclick="selecionarAba(this)">GNV</button>
-  </div>
-
-  <!-- TOP 3 MAIS BARATOS -->
-  <div class="top-card">
-    <h2><span class="trophy">🏆</span> Postos Mais Baratos — <span id="aba-titulo">Gasolina</span></h2>
-    <div class="top-list" id="top-list">
-      <p style="color:var(--muted);font-size:14px">Carregando...</p>
-    </div>
-  </div>
-
-  <p class="meta" id="meta-texto"></p>
-
-  <!-- LISTA DE POSTOS -->
-  <section class="stations" id="lista-postos"></section>
-</div>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-  const map = L.map('map', { zoomControl: true }).setView([-22.9711, -43.2226], 12);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap', maxZoom: 19
-  }).addTo(map);
-
-  let marcadorUsuario = null;
-  let userLatLng = null;
-  let todosPostos = [];
-
-  const iconeUsuario = L.divIcon({
-    html: '<div style="width:14px;height:14px;background:#378ADD;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2px #378ADD"></div>',
-    iconSize: [20, 20], iconAnchor: [10, 10], className: ''
-  });
-
-  // Carrega postos do Django
-  fetch("{% url 'postos-geojson' %}")
-    .then(r => r.json())
-    .then(data => {
-      todosPostos = data.features;
-      renderizarTudo(todosPostos);
-    });
-
-  function renderizarTudo(postos) {
-    // Limpa marcadores antigos (exceto usuário)
-    map.eachLayer(l => { if (l instanceof L.Marker && l !== marcadorUsuario) map.removeLayer(l); });
-
-    postos.forEach(f => {
-      const p = f.properties;
-      const [lng, lat] = f.geometry.coordinates;
-      let distHTML = '';
-      if (userLatLng) {
-        const dist = (userLatLng.distanceTo(L.latLng(lat, lng)) / 1000).toFixed(1);
-        distHTML = `<br><small>${dist} km de você</small>`;
-      }
-      L.marker([lat, lng]).addTo(map).bindPopup(`
-        <strong>${p.nome}</strong><br>${p.endereco}${distHTML}
-        <hr style="margin:4px 0">
-        ⛽ R$ ${p.gasolina || '–'} &nbsp; 🌿 R$ ${p.etanol || '–'}
-      `);
-    });
-
-    renderizarLista(postos);
-    renderizarTop(postos);
-    document.getElementById('meta-texto').textContent = `${postos.length} postos encontrados`;
-  }
-
-  function renderizarLista(postos) {
-    const el = document.getElementById('lista-postos');
-    if (!postos.length) { el.innerHTML = '<p style="color:var(--muted)">Nenhum posto encontrado.</p>'; return; }
-    el.innerHTML = postos.map(f => {
-      const p = f.properties;
-      const [lng, lat] = f.geometry.coordinates;
-      let distStr = '';
-      if (userLatLng) {
-        const dist = (userLatLng.distanceTo(L.latLng(lat, lng)) / 1000).toFixed(1);
-        distStr = `<span class="dist">➤ ${dist} km</span>`;
-      }
-      return `
-        <article class="station">
-          <div>
-            <h3>${p.nome}</h3>
-            <div class="addr">${p.endereco}</div>
-            <div class="info">
-              ${distStr}
-              ${p.gasolina ? `<span>⛽ R$ ${p.gasolina}</span>` : ''}
-              ${p.etanol ? `<span>🌿 R$ ${p.etanol}</span>` : ''}
+    <!-- Topbar - Estilo do index.html -->
+    <header class="topbar">
+        <div class="brand">
+            <div class="brand-logo" aria-hidden="true">
+                <!-- fuel pump icon -->
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 22V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v18"/>
+                    <path d="M3 14h13"/>
+                    <path d="M16 8h2a2 2 0 0 1 2 2v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V9l-3-3"/>
+                </svg>
             </div>
-          </div>
-          <div class="station-actions">
-            <div class="no-price">${p.gasolina ? '' : 'Sem preço'}</div>
-          </div>
-        </article>`;
-    }).join('');
-  }
+            <span class="brand-name">AbasteceAí</span>
+        </div>
 
-  function renderizarTop(postos) {
-    const comPreco = postos.filter(f => f.properties.preco_gasolina || f.properties.gasolina);
-    const el = document.getElementById('top-list');
-    if (!comPreco.length) { el.innerHTML = '<p style="color:var(--muted);font-size:14px">Sem preços cadastrados ainda.</p>'; return; }
-    el.innerHTML = comPreco.slice(0, 3).map((f, i) => {
-      const p = f.properties;
-      return `<div class="top-row">
-        <span class="rank">${i + 1}º</span>
-        <div><div class="station-name">${p.nome}</div><div class="station-sub">${p.endereco}</div></div>
-        <span class="price">↘ R$ ${p.gasolina || p.preco_gasolina}</span>
-      </div>`;
-    }).join('');
-  }
+        <nav class="top-actions" aria-label="Ações">
+            <button class="icon-btn" aria-label="Notificações">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+                    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+                </svg>
+            </button>
+            <button class="icon-btn" aria-label="Minha conta">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+            </button>
+            <button class="icon-btn" aria-label="Sair">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+            </button>
+        </nav>
+    </header>
 
-  function filtrarPostos() {
-    const q = document.getElementById('busca').value.toLowerCase();
-    const filtrados = todosPostos.filter(f =>
-      f.properties.nome.toLowerCase().includes(q) ||
-      f.properties.endereco.toLowerCase().includes(q)
-    );
-    renderizarTudo(filtrados);
-  }
+    <!-- Conteúdo Principal -->
+    <main class="container">
+        <!-- Map - Com Django Leaflet -->
+        <section class="map" aria-label="Mapa">
+            {% leaflet_map "map" callback="window.mapInit" %}
+            
+            <!-- Sobreposições do mapa (estilo index.html) -->
+            <div class="map-pill map-pill--warning">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <span id="status-geo">Permissão negada</span>
+            </div>
+            
+            <button class="map-pill map-pill--action" onclick="localizarUsuario()">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
+                </svg>
+                Ativar GPS
+            </button>
+            
+            <div class="map-attribution">Leaflet | © OpenStreetMap</div>
+        </section>
 
-  function selecionarAba(el) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    el.classList.add('active');
-    document.getElementById('aba-titulo').textContent = el.textContent;
-  }
+        <!-- Search - Estilo index.html -->
+        <div class="search-row">
+            <label class="search">
+                <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" placeholder="Buscar posto, endereço ou cidade..." id="busca" oninput="filtrarPostos()" />
+            </label>
+            <button class="icon-btn icon-btn--bordered" aria-label="Filtros">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                </svg>
+                <span class="badge" style="position:absolute;top:-4px;right:-4px;background:var(--primary);color:#000;border-radius:50%;padding:0 4px;font-size:10px;font-weight:700;">25</span>
+            </button>
+        </div>
 
-  // Geolocalização
-  function localizarUsuario() {
-    if (!navigator.geolocation) { alert('Navegador não suporta geolocalização.'); return; }
-    setStatus('Obtendo sua localização...');
-    navigator.geolocation.getCurrentPosition(
-      pos => {
-        userLatLng = L.latLng(pos.coords.latitude, pos.coords.longitude);
-        if (marcadorUsuario) map.removeLayer(marcadorUsuario);
-        marcadorUsuario = L.marker(userLatLng, { icon: iconeUsuario })
-          .addTo(map).bindPopup('Você está aqui').openPopup();
-        map.setView(userLatLng, 14);
-        setStatus('Localização encontrada!', 2000);
-        renderizarTudo(todosPostos); // recalcula distâncias
-      },
-      err => {
-        const msgs = { 1: 'Permissão negada.', 2: 'Posição indisponível.', 3: 'Tempo esgotado.' };
-        setStatus(msgs[err.code] || 'Erro.', 4000);
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
-  }
+        <!-- Actions - Estilo index.html -->
+        <div class="actions-row">
+            <button class="btn btn--primary" onclick="window.location.href='{% url 'adicionar-preco' %}'">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Informar Preço
+            </button>
+            <button class="btn btn--ghost">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 11l3 3 8-8"/>
+                    <path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/>
+                </svg>
+                Validar Preços
+            </button>
+            <button class="icon-btn icon-btn--bordered" aria-label="Estatísticas">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"/>
+                    <line x1="12" y1="20" x2="12" y2="4"/>
+                    <line x1="6" y1="20" x2="6" y2="14"/>
+                </svg>
+            </button>
+            <button class="icon-btn icon-btn--bordered" aria-label="Ranking">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                    <path d="M4 22h16"/>
+                    <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+                    <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+                    <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+                </svg>
+            </button>
+        </div>
 
-  function setStatus(msg, ms = null) {
-    const el = document.getElementById('status-geo');
-    el.textContent = msg; el.style.display = 'block';
-    if (ms) setTimeout(() => el.style.display = 'none', ms);
-  }
-</script>
+        <!-- Fuel filters - Estilo index.html -->
+        <div class="chips" role="tablist" aria-label="Combustíveis">
+            <button class="chip chip--active" role="tab" aria-selected="true" onclick="selecionarAba(this)">Gasolina</button>
+            <button class="chip" role="tab" onclick="selecionarAba(this)">Etanol</button>
+            <button class="chip" role="tab" onclick="selecionarAba(this)">Aditivada</button>
+            <button class="chip" role="tab" onclick="selecionarAba(this)">Diesel S10</button>
+            <button class="chip" role="tab" onclick="selecionarAba(this)">Diesel S500</button>
+            <button class="chip" role="tab" onclick="selecionarAba(this)">GNV</button>
+        </div>
+
+        <!-- Top 3 Mais Baratos - Estilo melhorado -->
+        <div style="background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; box-shadow: var(--shadow-sm);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h2 style="font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 20px;">🏆</span>
+                    Postos Mais Baratos — <span id="aba-titulo">Gasolina</span>
+                </h2>
+                <span style="font-size: 14px; color: var(--muted);" id="meta-texto">Carregando...</span>
+            </div>
+            <div id="top-list">
+                <p style="color:var(--muted);font-size:14px">Carregando postos...</p>
+            </div>
+        </div>
+
+        <!-- Lista de Postos - Estilo index.html -->
+        <section id="lista-postos">
+            <p style="color:var(--muted);font-size:14px;text-align:center;padding:20px;">Carregando postos...</p>
+        </section>
+    </main>
+
+    <!-- SCRIPTS - Mantido do homefeio.html -->
+    <script>
+        // o mapa, o tile layer e o centro/zoom padrão vêm do LEAFLET_CONFIG no settings.py
+        // a tag leaflet_map do template já cria o mapa e chama a mapInit quando ele fica pronto
+        let map;
+        let marcadorUsuario = null;
+        let userLatLng = null;
+        let todosPostos = []; // guarda todos os postos vindos do backend, sem filtro
+
+        // ícone redondo azul pra marcar onde o usuário está no mapa
+        const iconeUsuario = L.divIcon({
+            html: '<div style="width:14px;height:14px;background:#378ADD;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2px #378ADD"></div>',
+            iconSize: [20, 20], iconAnchor: [10, 10], className: ''
+        });
+
+        // chamada automaticamente pelo leaflet quando o mapa termina de carregar.
+        // a partir daqui a gente busca os postos no django e desenha tudo na tela
+        function mapInit(leafletMap, options) {
+            map = leafletMap;
+
+            fetch("{% url 'postos-geojson' %}")
+                .then(r => r.json())
+                .then(data => {
+                    todosPostos = data.features;
+                    renderizarTudo(todosPostos);
+                })
+                .catch(err => {
+                    console.error('Erro ao carregar postos:', err);
+                    document.getElementById('lista-postos').innerHTML = 
+                        '<p style="color:var(--muted);text-align:center;padding:20px;">Erro ao carregar postos. Tente novamente.</p>';
+                });
+        }
+
+        // recebe a lista de postos e atualiza tudo de uma vez: marcadores no mapa,
+        // a lista embaixo e o top 3 mais barato
+        function renderizarTudo(postos) {
+            // tira os marcadores antigos do mapa, mas deixa o marcador do usuário
+            map.eachLayer(l => { if (l instanceof L.Marker && l !== marcadorUsuario) map.removeLayer(l); });
+
+            postos.forEach(f => {
+                const p = f.properties;
+                const [lng, lat] = f.geometry.coordinates;
+                let distHTML = '';
+                if (userLatLng) {
+                    const dist = (userLatLng.distanceTo(L.latLng(lat, lng)) / 1000).toFixed(1);
+                    distHTML = `<br><small>${dist} km de você</small>`;
+                }
+                L.marker([lat, lng]).addTo(map).bindPopup(`
+                    <strong>${p.nome}</strong><br>${p.endereco}${distHTML}
+                    <hr style="margin:4px 0">
+                    R$ ${p.gasolina || '–'} &nbsp; R$ ${p.etanol || '–'}
+                `);
+            });
+
+            renderizarLista(postos);
+            renderizarTop(postos);
+            document.getElementById('meta-texto').textContent = `${postos.length} postos encontrados`;
+        }
+
+        // monta os cards da lista de postos que fica embaixo do mapa
+        function renderizarLista(postos) {
+            const el = document.getElementById('lista-postos');
+            if (!postos.length) { 
+                el.innerHTML = '<p style="color:var(--muted);text-align:center;padding:20px;">Nenhum posto encontrado.</p>'; 
+                return; 
+            }
+
+            el.innerHTML = postos.map(f => {
+                const p = f.properties;
+                const [lng, lat] = f.geometry.coordinates;
+                let distStr = '';
+                if (userLatLng) {
+                    const dist = (userLatLng.distanceTo(L.latLng(lat, lng)) / 1000).toFixed(1);
+                    distStr = `<span style="color:var(--muted);font-size:13px;">➤ ${dist} km</span>`;
+                }
+                return `
+                    <div style="background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow-sm); margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div style="flex: 1;">
+                                <h3 style="font-weight: 600; font-size: 15px; margin: 0;">${p.nome}</h3>
+                                <p style="color: var(--muted); font-size: 13px; margin: 4px 0 8px;">${p.endereco}</p>
+                                <div style="display: flex; gap: 12px; flex-wrap: wrap; font-size: 14px;">
+                                    ${distStr}
+                                    ${p.gasolina ? `<span style="font-weight:600;">R$ ${p.gasolina}</span>` : ''}
+                                    ${p.etanol ? `<span style="font-weight:600;">R$ ${p.etanol}</span>` : ''}
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                ${p.gasolina ? `<span style="font-weight: 700; font-size: 18px;">R$ ${p.gasolina}</span>` : 
+                                `<span style="color: var(--muted); font-size: 13px;">Sem preço</span>`}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // pega só os postos que têm preço de gasolina cadastrado e mostra
+        // os 3 mais baratos no card do topo
+        function renderizarTop(postos) {
+            const comPreco = postos.filter(f => f.properties.preco_gasolina || f.properties.gasolina);
+            const el = document.getElementById('top-list');
+            if (!comPreco.length) { 
+                el.innerHTML = '<p style="color:var(--muted);font-size:14px">Sem preços cadastrados ainda.</p>'; 
+                return; 
+            }
+
+            // Ordena por preço
+            comPreco.sort((a, b) => {
+                const precoA = parseFloat(a.properties.gasolina || a.properties.preco_gasolina || 999);
+                const precoB = parseFloat(b.properties.gasolina || b.properties.preco_gasolina || 999);
+                return precoA - precoB;
+            });
+
+            el.innerHTML = comPreco.slice(0, 3).map((f, i) => {
+                const p = f.properties;
+                const preco = p.gasolina || p.preco_gasolina;
+                return `
+                    <div style="display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border);">
+                        <span style="font-weight: 700; font-size: 16px; min-width: 32px;">${i + 1}º</span>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 14px;">${p.nome}</div>
+                            <div style="color: var(--muted); font-size: 13px;">${p.endereco}</div>
+                        </div>
+                        <span style="font-weight: 700; font-size: 16px; color: #059669;">↘ R$ ${preco}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // filtra os postos pelo que foi digitado na busca, comparando com o nome
+        // e o endereço (ignorando maiúscula/minúscula)
+        function filtrarPostos() {
+            const q = document.getElementById('busca').value.toLowerCase();
+            if (!todosPostos.length) return;
+            const filtrados = todosPostos.filter(f =>
+                f.properties.nome.toLowerCase().includes(q) ||
+                f.properties.endereco.toLowerCase().includes(q)
+            );
+            renderizarTudo(filtrados);
+        }
+
+        // troca a aba de combustível ativa (gasolina, etanol, etc) e atualiza
+        // o título que aparece no card do top 3
+        function selecionarAba(el) {
+            document.querySelectorAll('.chip').forEach(t => {
+                t.classList.remove('chip--active');
+                t.setAttribute('aria-selected', 'false');
+            });
+            el.classList.add('chip--active');
+            el.setAttribute('aria-selected', 'true');
+            document.getElementById('aba-titulo').textContent = el.textContent;
+            
+            // Aqui você pode adicionar lógica para filtrar por tipo de combustível
+            // Exemplo: recarregar os postos com o filtro do combustível selecionado
+        }
+
+        // pede pro navegador a localização atual do usuário (gps/wifi), marca
+        // ela no mapa e recalcula a distância de cada posto a partir daí
+        function localizarUsuario() {
+            if (!navigator.geolocation) { 
+                alert('Navegador não suporta geolocalização.'); 
+                return; 
+            }
+            setStatus('Obtendo sua localização...');
+
+            navigator.geolocation.getCurrentPosition(
+                pos => {
+                    userLatLng = L.latLng(pos.coords.latitude, pos.coords.longitude);
+                    if (marcadorUsuario) map.removeLayer(marcadorUsuario);
+                    marcadorUsuario = L.marker(userLatLng, { icon: iconeUsuario })
+                        .addTo(map).bindPopup('Você está aqui').openPopup();
+                    map.setView(userLatLng, 14);
+                    setStatus('Localização encontrada! ✅', 2000);
+                    renderizarTudo(todosPostos); // recalcula as distâncias com a nova posição
+                },
+                err => {
+                    // 1 = permissão negada, 2 = posição indisponível, 3 = deu timeout
+                    const msgs = { 1: 'Permissão negada ❌', 2: 'Posição indisponível', 3: 'Tempo esgotado.' };
+                    setStatus(msgs[err.code] || 'Erro.', 4000);
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
+        }
+
+        // mostra uma mensagem no balãozinho embaixo do mapa. se passar um tempo
+        // em ms, ela desaparece sozinha
+        function setStatus(msg, ms = null) {
+            const el = document.getElementById('status-geo');
+            el.textContent = msg;
+            el.style.display = 'inline-flex';
+            if (ms) setTimeout(() => el.style.display = 'inline-flex', ms);
+        }
+    </script>
 </body>
 </html>

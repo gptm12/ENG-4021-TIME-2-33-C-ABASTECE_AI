@@ -37,8 +37,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'leaflet',
     'Abasteceaiapp',
 ]
+
+LEAFLET_CONFIG = {
+    "DEFAULT_CENTER": (-22.9711, -43.2226),  # (lat, lng) — mesmo centro que você já usava
+    "DEFAULT_ZOOM": 12,
+    "MIN_ZOOM": 3,
+    "MAX_ZOOM": 19,
+    "SCALE": "metric",
+    "RESET_VIEW": False,   # remove o botão extra de "voltar à visão geral", opcional
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -115,7 +126,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
