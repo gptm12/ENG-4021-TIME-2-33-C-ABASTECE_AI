@@ -11,24 +11,23 @@
             <h1>Detalhes do Posto</h1>
         </header>
         <div class="card">
-            <h3>Posto Shell Centro</h3>
-            <p>Av. Brasil, 123 - Centro</p>
-            <p>Bandeira: Shell</p>
-            <p>Avaliação: 4.5 estrelas</p>
+            <h3>{{ posto.nome }}</h3>
+            <p>{{ posto.endereco }}</p>
+            <p>Latitude: {{ posto.latitude }}</p>
+            <p>Longitude: {{ posto.longitude }}</p>
+            <p>Avaliação: 5 estrelas</p>
         </div>
         <h2 style="margin: 15px 0 10px;">Preços Atuais</h2>
         <ul class="lista-precos">
-            <li><span>Gasolina Comum</span> <strong>R$ 5,49</strong></li>
-            <li><span>Gasolina Aditivada</span> <strong>R$ 5,69</strong></li>
-            <li><span>Etanol</span> <strong>R$ 3,89</strong></li>
-            <li><span>Diesel S-10</span> <strong>R$ 6,15</strong></li>
-            <li><span>GNV</span> <strong>R$ 5,95</strong></li>
+            {% for preco in precos %}
+                <li><span>{{ preco.tipo_combustivel }}</span> <strong>R$ {{ preco.valor }}</strong></li>
+            {% endfor %}
         </ul>
         <h2 style="margin: 20px 0 10px;">Comércios no Posto</h2>
         <ul class="lista-precos">
-            <li>Conveniência Shell Select</li>
-            <li>Farmácia Drogasil</li>
-            <li>Restaurante Subway</li>
+            {% for comodidade in comodidades %}
+                <li>{{ comodidade.nome }}</li>
+            {% endfor %}
         </ul>
         <a href="#" class="botao">Como chegar</a>
         <a href="home.html" class="botao botao-secundario">Voltar</a>

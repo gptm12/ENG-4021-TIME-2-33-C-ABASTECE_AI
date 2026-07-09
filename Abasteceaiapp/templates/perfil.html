@@ -13,30 +13,17 @@
         </header>
         <div class="card" style="text-align:center;">
             
-            <h3>João da Silva</h3>
-            <p>joao@email.com</p>
+            <h3>{{ conta.usuario }}</h3>
+            <p>{{ conta.email }}</p>
             <p>Membro desde: Janeiro/2025</p>
         </div>
-        <h2 style="margin: 15px 0 10px;">Editar dados</h2>
-        <form>
-            <div class="form-grupo">
-                <label for="nome">Nome</label>
-                <input type="text" id="nome" value="João da Silva">
-            </div>
-            <div class="form-grupo">
-                <label for="email"><i class="bi bi-envelope"></i>E-mail</label>
-                <input type="email" id="email" value="joao@email.com">
-            </div>
-            <div class="form-grupo">
-                <label for="telefone"><i class="bi bi-telephone-fill"></i>Telefone</label>
-                <input type="text" id="telefone" placeholder="(11) 99999-9999">
-            </div>
-            <button type="submit" class="botao">Salvar alterações</button>
-        </form>
+        <p class="link-rodape">
+            <a href="{% url 'atualizar-conta' conta.id %}">Atualizar informações da conta</a>
+        </p>
         <p class="link-rodape">
             <a href="{% url 'login' %}">Sair da conta</a>
         </p>
     </div>
 </body>
 </html>
-perfil
+

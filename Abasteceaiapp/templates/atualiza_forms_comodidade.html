@@ -1,11 +1,11 @@
-<h1>Adicionar Comodidades</h1>
+<h1>Atualizar Comodidades</h1>
 
-<form method="post" action="/adicionar_comodidade/">
+<form method="post" action="/atualizar_comodidade/{{ comodidade.id }}/">
     {% csrf_token %}
 
     <div>
         <label>Nome da comodidade:</label>
-        <input name="nome" type="text">
+        <input name="nome" type="text" value="{{ comodidade.nome }}">
     </div>
 
     <div>
@@ -27,6 +27,6 @@
         </select>
     </div>
 
-    <input type="submit" value= "Adicionar">
+    <input type="submit" value= "Atualizar">
 
 </form>

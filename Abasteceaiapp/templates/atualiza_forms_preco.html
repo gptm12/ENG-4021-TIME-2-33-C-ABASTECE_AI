@@ -1,6 +1,6 @@
-<h1>Adicionar Preços</h1>
+<h1>Atualizar Preços</h1>
 
-<form method="post" action="/adicionar_preco/">
+<form method="post" action="/atualizar_preco/{{ preco.id }}/">
     {% csrf_token %}
     <div>
         <label>Tipo de combustível:</label>
@@ -25,6 +25,6 @@
         </select>
     </div>
 
-    <input type="submit" value= "Adicionar">
+    <input type="submit" value= "Atualizar">
 </form>
 

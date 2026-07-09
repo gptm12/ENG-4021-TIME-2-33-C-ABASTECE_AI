@@ -38,7 +38,7 @@ class Preco(models.Model):
     atualizado_em = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.posto.nome} - {self.tipo}: R$ {self.valor}"
+        return f"{self.posto.nome} - {self.tipo_combustivel.titulo}: R$ {self.valor}"
 
 
 class Comodidade(models.Model):

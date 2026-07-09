@@ -1,0 +1,23 @@
+<h1>Atualize as informações da sua conta</h1>
+
+<form method="post" action="/atualizar_conta/{{ conta.id }}/">
+    {% csrf_token %}
+
+    <div>
+        <label>Nome do usuário:</label>
+        <input name="usuario" type="text" value="{{ conta.usuario }}">
+    </div>
+
+    <div>
+        <label>Email:</label>
+        <input name="email" type="email" value="{{ conta.email }}">
+    </div>
+
+    <div>
+        <label>Senha:</label>
+        <input name="senha" type="password" value="{{ conta.senha }}">
+    </div>
+
+    <input type="submit" value= "Atualizar conta">
+
+</form>
