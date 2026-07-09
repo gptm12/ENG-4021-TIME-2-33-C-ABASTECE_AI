@@ -1,15 +1,29 @@
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import JsonResponse
-from .models import Comodidade, Conta, Posto,Preco
+from django.conf import settings
+from .models import Comodidade, Conta, Posto, Preco, TipoCombustivel
 
 
 def home(request):
     postos = Posto.objects.all()
-    return render(request, 'home.html', {'postos': postos})
+    conta_id = request.session.get('conta_id')
+    return render(request, 'home.html', {'postos': postos, 'conta_id': conta_id})
 
 
 def login_view(request):
-    return render(request, 'login.html')
+    erro = None
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        senha = request.POST.get('password')
+
+        conta = Conta.objects.filter(email=email, senha=senha).first()
+        if conta:
+            request.session['conta_id'] = conta.id
+            return redirect('home')
+        else:
+            erro = 'E-mail ou senha inválidos.'
+
+    return render(request, 'login.html', {'erro': erro})
 
 
 def postos_geojson(request):
@@ -40,16 +54,18 @@ def detalhes_view(request, posto_id):
     return render(request, 'detalhes.html', {'posto': posto, 'precos': precos, 'comodidades': comodidades})
 
 
-def perfil_view(request):
-    conta = get_object_or_404(Conta, id=request.GET.get('conta_id'))
+def perfil_view(request, conta_id):
+    conta = get_object_or_404(Conta, id=conta_id)
     return render(request, 'perfil.html', {'conta': conta})
 
 def adicionar_posto_view(request):
     if request.method == 'POST':
         nome = request.POST.get('nome')
         endereco = request.POST.get('endereco')
-        latitude = request.POST.get('latitude')
-        longitude = request.POST.get('longitude')
+
+        default_lat, default_lng = settings.LEAFLET_CONFIG['DEFAULT_CENTER']
+        latitude = request.POST.get('latitude') or default_lat
+        longitude = request.POST.get('longitude') or default_lng
 
         posto = Posto.objects.create(
             nome=nome,
@@ -57,9 +73,19 @@ def adicionar_posto_view(request):
             latitude=latitude,
             longitude=longitude,
         )
-        return render(request, 'detalhes.html', {'posto': posto})
+
+        tipo_combustivel_id = request.POST.get('tipo_combustivel')
+        valor = request.POST.get('valor', '').replace(',', '.')
+        if tipo_combustivel_id and valor:
+            tipo_combustivel = get_object_or_404(TipoCombustivel, id=tipo_combustivel_id)
+            Preco.objects.create(posto=posto, tipo_combustivel=tipo_combustivel, valor=valor)
+
+        return redirect('home')
     else:
-        return render(request, 'forms_posto.html',context={'action': 'Adicionar'})
+        return render(request, 'atualiza_forms_preco.html', context={
+            'action': 'Adicionar',
+            'tipos_combustivel': TipoCombustivel.objects.all(),
+        })
     
 def atualizar_posto_view(request,posto_id):
     posto = get_object_or_404(Posto, id=posto_id)
@@ -84,29 +110,38 @@ def deletar_posto_view(request, posto_id):
     
 def adicionar_preco_view(request):
     if request.method == 'POST':
-        tipo_combustivel = request.POST.get('tipo_combustivel')
-        preco = request.POST.get('valor')
+        tipo_combustivel = get_object_or_404(TipoCombustivel, id=request.POST.get('tipo_combustivel'))
+        valor = request.POST.get('valor', '').replace(',', '.')
 
         preco = Preco.objects.create(
             tipo_combustivel=tipo_combustivel,
-            valor=preco,
+            valor=valor,
             posto=get_object_or_404(Posto, id=request.POST.get('posto')),
         )
-        return render(request, 'detalhes.html', {'preco': preco})
+        return redirect('home')
     else:
-        return render(request, 'forms_preco.html', context={'action': 'Adicionar', 'postos': Posto.objects.all()})
+        return render(request, 'forms_preco.html', context={
+            'action': 'Adicionar',
+            'postos': Posto.objects.all(),
+            'tipos_combustivel': TipoCombustivel.objects.all(),
+        })
 
-def atualizar_preco_view(request):
-    preco = get_object_or_404(Preco, id=request.POST.get('preco_id'))
+def atualizar_preco_view(request, preco_id):
+    preco = get_object_or_404(Preco, id=preco_id)
     if request.method == 'POST':
-        tipo_combustivel = request.POST.get('tipo_combustivel')
-        valor = request.POST.get('valor')
+        tipo_combustivel = get_object_or_404(TipoCombustivel, id=request.POST.get('tipo_combustivel'))
+        valor = request.POST.get('valor', '').replace(',', '.')
         preco.tipo_combustivel = tipo_combustivel
         preco.valor = valor
         preco.save()
         return render(request, 'detalhes.html', {'preco': preco})
     else:
-        return render(request, 'forms_preco.html', context={'action': 'Atualizar', 'postos': Posto.objects.all()})   
+        return render(request, 'atualiza_forms_preco.html', context={
+            'action': 'Atualizar',
+            'preco': preco,
+            'postos': Posto.objects.all(),
+            'tipos_combustivel': TipoCombustivel.objects.all(),
+        })
     
 def deletar_preco_view(request, preco_id):
     preco = get_object_or_404(Preco, id=preco_id)

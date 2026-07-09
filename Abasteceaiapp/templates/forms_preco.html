@@ -1,30 +1,138 @@
-<h1>Adicionar Preços</h1>
+<!-- forms_preco.html -->
+{% load static %}
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% if action == 'Adicionar' %}Adicionar{% else %}Atualizar{% endif %} Preço · AbasteceAí</title>
+    <link rel="stylesheet" href= "/static/style.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <header class="topbar">
+        <a href="{% url 'home' %}" class="icon-btn" aria-label="Voltar">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5"/>
+                <path d="m12 19-7-7 7-7"/>
+            </svg>
+        </a>
+        <h1 class="page-title">{% if action == 'Adicionar' %}Adicionar{% else %}Atualizar{% endif %} Preço</h1>
+    </header>
 
-<form method="post" action="/adicionar_preco/">
-    {% csrf_token %}
-    <div>
-        <label>Tipo de combustível:</label>
-        <select name="tipo_combustivel">
-            <option value="gasolina">Gasolina</option>
-            <option value="alcool">Álcool</option> 
-            <option value="etanol">Etanol</option>
-            <option value="diesel">Diesel</option>
-        </select>
-    </div>
-    <div>
-        <label>Preço do combustível:</label>
-        <input name="valor" type="number" step="0.01">
-    </div>
+    <main class="page">
+        <div class="alert">
+            <svg class="alert-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 16v-4"/>
+                <path d="M12 8h.01"/>
+            </svg>
+            <div>
+                <div class="alert-title">Validação colaborativa</div>
+                <div class="alert-text">Seu preço será validado por outros usuários. Contribuições confirmadas aumentam sua reputação.</div>
+            </div>
+        </div>
 
-    <div>
-        <label>Posto:</label>
-        <select name="posto">
-            {% for posto in postos %}
-                <option value="{{ posto.id }}">{{ posto.nome }}</option>
-            {% endfor %}
-        </select>
-    </div>
+        <section class="card">
+            <div class="card-header">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 22V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/>
+                    <path d="M3 22h12"/>
+                    <path d="M15 10h2a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2a2 2 0 0 0 2-2V8l-3-3"/>
+                    <path d="M7 8h4"/>
+                    <path d="M7 12h4"/>
+                </svg>
+                <h2>Informar Preço</h2>
+            </div>
 
-    <input type="submit" value= "Adicionar">
-</form>
+            <div class="timestamp">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                </svg>
+                <span>{% now "d/m/Y" %} às {% now "H:i" %}</span>
+            </div>
 
+            <!-- CORRIGIDO: Usando a URL correta -->
+            <form class="form" method="POST" action="{% url 'adicionar-preco' %}">
+                {% csrf_token %}
+                
+                <!-- Campo: Posto -->
+                <div class="field">
+                    <label for="posto">Posto <span class="req">*</span></label>
+                    <div class="input-search">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.3-4.3"/>
+                        </svg>
+                        <select id="posto" name="posto" required>
+                            <option value="">Selecione um posto</option>
+                            {% for posto in postos %}
+                                <option value="{{ posto.id }}">{{ posto.nome }} - {{ posto.endereco }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="button" class="btn-ghost" data-href="{% url 'adicionar-posto' %}" onclick="window.location.href=this.dataset.href">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 5v14"/>
+                            <path d="M5 12h14"/>
+                        </svg>
+                        Cadastrar novo posto
+                    </button>
+                </div>
+
+                <!-- Campo: Combustível -->
+                <div class="field">
+                    <label for="tipo_combustivel">Combustível <span class="req">*</span></label>
+                    <div class="select-wrap">
+                        <select id="tipo_combustivel" name="tipo_combustivel" required>
+                            <option value="">Selecione o combustível</option>
+                            {% for tipo in tipos_combustivel %}
+                                <option value="{{ tipo.id }}">{{ tipo.titulo }}</option>
+                            {% endfor %}
+                        </select>
+                        <svg class="chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m6 9 6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Campo: Preço -->
+                <div class="field">
+                    <label for="valor">Preço observado (R$) <span class="req">*</span></label>
+                    <input 
+                        type="text" 
+                        id="valor" 
+                        name="valor" 
+                        inputmode="decimal" 
+                        placeholder="Ex: 5,89" 
+                        required
+                        pattern="[0-9]+[,.]?[0-9]{0,2}"
+                        title="Digite um preço válido (ex: 5,89)"
+                    />
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m22 2-7 20-4-9-9-4Z"/>
+                        <path d="M22 2 11 13"/>
+                    </svg>
+                    {% if action == 'Adicionar' %}Enviar para Validação{% else %}Atualizar Preço{% endif %}
+                </button>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        // Validação do campo preço (converte vírgula para ponto)
+        document.getElementById('valor').addEventListener('blur', function() {
+            let value = this.value.replace(',', '.');
+            if (value && !isNaN(value)) {
+                this.value = parseFloat(value).toFixed(2).replace('.', ',');
+            }
+        });
+    </script>
+</body>
+</html>

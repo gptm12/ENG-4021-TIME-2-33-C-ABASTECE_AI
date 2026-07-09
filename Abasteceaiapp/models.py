@@ -62,6 +62,5 @@ class Conta(models.Model):
     email = models.EmailField()
     senha = models.CharField(max_length=100)
     def __str__(self):
-        return self.usuario, self.email, self.senha
-
+        return f"{self.usuario} ({self.email})"
 
